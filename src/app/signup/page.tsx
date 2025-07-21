@@ -1,7 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabaseClient";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { FcGoogle } from "react-icons/fc";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -9,6 +11,16 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Redirect to dashboard after successful signup (including Google OAuth)
+  useEffect(() => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && session.user) {
+        router.push("/dashboard");
+      }
+    });
+    return () => listener?.subscription?.unsubscribe();
+  }, [router]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,13 +35,17 @@ export default function SignupPage() {
     }
   };
 
+  const handleGoogleSignUp = async () => {
+    await supabase.auth.signInWithOAuth({ provider: 'google' });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-100 via-blue-50 to-blue-200">
       <form
         onSubmit={handleSignup}
         className="bg-white p-8 rounded shadow-md w-full max-w-sm space-y-6"
       >
-        <h1 className="text-2xl font-bold text-center">Sign Up</h1>
+        <h1 className="text-3xl font-bold text-center">Sign Up</h1>
         <div>
           <label className="block mb-1 text-sm font-medium">Email</label>
           <input
@@ -52,7 +68,7 @@ export default function SignupPage() {
             autoComplete="new-password"
           />
         </div>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
+        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
@@ -60,8 +76,21 @@ export default function SignupPage() {
         >
           {loading ? "Signing up..." : "Sign Up"}
         </button>
+        <div className="flex items-center gap-2 my-2">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-gray-400 text-xs">or</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-2 py-2 text-base font-semibold border-gray-300 hover:bg-gray-100"
+          onClick={handleGoogleSignUp}
+        >
+          <FcGoogle className="w-6 h-6" /> Sign up with Google
+        </Button>
         <div className="text-center text-sm">
-          Already have an account? <a href="/login" className="text-blue-600 hover:underline">Login</a>
+          Already have an account? <a href="/login" className="text-blue-600 hover:underline font-semibold">Login</a>
         </div>
       </form>
     </div>
