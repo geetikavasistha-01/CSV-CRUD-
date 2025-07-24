@@ -10,6 +10,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
+  const [oauthError, setOauthError] = useState("");
 
   // Redirect to dashboard after successful login (including Google OAuth)
   useEffect(() => {
@@ -34,6 +36,23 @@ export default function LoginPage() {
     }
   };
 
+  // Google OAuth sign-in handler
+  const handleGoogleSignIn = async () => {
+    setOauthLoading(true);
+    setOauthError("");
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: typeof window !== 'undefined' ? window.location.origin + '/dashboard' : undefined }
+      });
+      if (error) setOauthError(error.message);
+    } catch (err: any) {
+      setOauthError(err.message || "Google sign-in failed");
+    } finally {
+      setOauthLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
       <form
@@ -41,6 +60,16 @@ export default function LoginPage() {
         className="bg-card p-8 rounded shadow-md w-full max-w-sm space-y-6 border border-border"
       >
         <h1 className="text-3xl font-bold text-center">Login</h1>
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          className="w-full flex items-center justify-center gap-2 border border-border bg-background hover:bg-muted text-foreground rounded py-2 font-semibold transition disabled:opacity-60"
+          disabled={oauthLoading || loading}
+        >
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+          {oauthLoading ? "Redirecting..." : "Continue with Google"}
+        </button>
+        {oauthError && <div className="text-destructive text-sm text-center">{oauthError}</div>}
         <div>
           <label className="block mb-1 text-sm font-medium text-foreground">Email</label>
           <input
