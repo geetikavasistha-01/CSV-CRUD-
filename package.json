@@ -37,7 +37,8 @@
   },
   "devDependencies": {
     "eslint": "^8",
-    "eslint-config-next": "15.4.2"
+    "eslint-config-next": "15.4.2",
+    "@types/papaparse": "^5.3.16"
   }
 }
 
