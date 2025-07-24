@@ -43,7 +43,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={toggleDarkMode}
-      className="p-2 rounded-full hover:bg-muted transition-colors"
+      className="p-2 rounded-full bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 transition-colors text-black dark:text-white shadow"
       title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
     >
       {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -110,6 +110,9 @@ export default function DashboardPage() {
   const [profileDebug, setProfileDebug] = useState("");
   const [editDialog, setEditDialog] = useState<{ type: 'cell' | 'row' | 'col', rowIdx?: number, colIdx?: number, value?: string } | null>(null);
   const [profileSaving, setProfileSaving] = useState(false);
+
+  // Profile Card State
+  const [showProfileCard, setShowProfileCard] = useState(false);
 
   function increaseTableSize() {
     setTableSize(size => (size === 'sm' ? 'md' : size === 'md' ? 'lg' : 'lg'));
@@ -746,20 +749,18 @@ export default function DashboardPage() {
           
           <div className="flex items-center gap-2 ml-auto">
             <ThemeToggle />
-            <button className="p-2 rounded-full hover:bg-muted" title="Stats" onClick={() => setShowStats(true)}>
+            <button className="p-2 rounded-full bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow" title="Stats" onClick={() => setShowStats(true)}>
               <BarChart2 className="w-5 h-5" />
             </button>
             
             {/* Updated Profile Button */}
-            <div className="relative">
-              <button
-                className="ml-2 w-10 h-10 rounded-full border-2 border-primary flex items-center justify-center bg-muted text-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                title="Profile"
-                onClick={() => setShowProfileEdit(true)}
-              >
-                <UserCircle2 className="w-8 h-8 text-muted-foreground" />
-              </button>
-            </div>
+            <button
+              onClick={() => setShowProfileCard(true)}
+              className="p-2 rounded-full bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow"
+              title="Profile"
+            >
+              <UserCircle2 className="w-6 h-6" />
+            </button>
           </div>
           <div className="flex items-center gap-2 ml-4">
             <span className="text-xs text-muted-foreground">Table size:</span>
@@ -778,7 +779,7 @@ export default function DashboardPage() {
               <div className="bg-card rounded-lg shadow p-4 mb-2">
                 <div className="font-semibold mb-2 text-lg">Upload CSV</div>
                 <button
-                  className="w-full px-2 py-3 bg-primary text-primary-foreground rounded-lg text-base font-semibold mb-3 shadow hover:bg-primary/90 transition"
+                  className="w-full py-2 px-4 rounded bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow font-semibold mb-2"
                   onClick={handleUploadClick}
                   type="button"
                 >
@@ -794,13 +795,13 @@ export default function DashboardPage() {
                 {csvError && <div className="text-destructive text-xs mb-1">{csvError}</div>}
                 {csvData && <div className="text-green-600 text-xs mb-1">CSV loaded: {csvData.length} rows, {csvData[0]?.length} columns</div>}
                 <div className="mt-3 flex flex-col gap-3">
-                  <button className="w-full px-2 py-3 bg-primary text-primary-foreground rounded-lg text-base font-semibold shadow hover:bg-primary/90 transition" onClick={handleExportCSV} disabled={columns.length === 0 || tableData.length === 0}>
+                  <button className="w-full py-2 px-4 rounded bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow font-semibold mb-2" onClick={handleExportCSV} disabled={columns.length === 0 || tableData.length === 0}>
                     Export as CSV
                   </button>
-                  <button className="w-full px-2 py-3 bg-primary/80 text-primary-foreground rounded-lg text-base font-semibold shadow hover:bg-primary/90 transition" onClick={handleExportPDF} disabled={columns.length === 0 || tableData.length === 0}>
+                  <button className="w-full py-2 px-4 rounded bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow font-semibold mb-2" onClick={handleExportPDF} disabled={columns.length === 0 || tableData.length === 0}>
                     Export as PDF
                   </button>
-                  <button className="w-full px-2 py-3 bg-muted text-foreground rounded-lg text-base font-semibold shadow" onClick={() => window.location.reload()}>
+                  <button className="w-full py-2 px-4 rounded bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow font-semibold mb-2" onClick={() => window.location.reload()}>
                     Reset Changes
                   </button>
                 </div>
@@ -824,7 +825,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="p-6 mt-auto">
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-semibold text-base shadow hover:bg-primary/90 transition" onClick={handleLogout}>
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow font-semibold" onClick={handleLogout}>
                 <LogOut className="w-5 h-5" /> Log out
               </button>
             </div>
@@ -861,8 +862,8 @@ export default function DashboardPage() {
             {/* Editable Table Card */}
             <div className="bg-card rounded-xl shadow p-6 border border-border max-w-full">
               <div className="flex items-center gap-2 mb-4">
-                <button className="px-4 py-2 bg-primary text-primary-foreground rounded font-semibold text-sm shadow hover:bg-primary/90 transition" onClick={handleAddRow}>Add Row</button>
-                <button className="px-4 py-2 bg-muted text-foreground rounded font-semibold text-sm shadow" onClick={handleUndo} disabled={columnHistory.length === 0}>Undo</button>
+                <button className="px-4 py-2 bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow" onClick={handleAddRow}>Add Row</button>
+                <button className="px-4 py-2 bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow" onClick={handleUndo} disabled={columnHistory.length === 0}>Undo</button>
                 <div className="ml-auto flex items-center gap-2">
                   <span className="text-sm">Rows per page:</span>
                   <select className="border border-border rounded px-2 py-1 bg-background text-foreground" value={rowsPerPage} onChange={e => { setRowsPerPage(Number(e.target.value)); setPage(0); }}>
@@ -989,7 +990,7 @@ export default function DashboardPage() {
                   />
                   <div className="flex gap-2 justify-end">
                     <button className="px-3 py-1 bg-muted rounded" onClick={() => setShowAddCol(false)}>Cancel</button>
-                    <button className="px-3 py-1 bg-primary text-primary-foreground rounded" onClick={handleAddColumn}>Add</button>
+                    <button className="px-3 py-1 bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow" onClick={handleAddColumn}>Add</button>
                   </div>
                 </div>
               </div>
@@ -1136,6 +1137,28 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Profile Card Modal */}
+        {showProfileCard && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+            <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-lg shadow-xl p-8 border border-border w-96 max-w-full">
+              <h2 className="text-xl font-bold mb-4">Profile</h2>
+              <div className="space-y-2">
+                <div>
+                  <span className="font-semibold">Email:</span> {user?.email}
+                </div>
+                <div>
+                  <span className="font-semibold">Username:</span> {userProfile?.username}
+                </div>
+              </div>
+              <button
+                className="mt-6 px-4 py-2 rounded bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow"
+                onClick={() => setShowProfileCard(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
         {/* Settings Modal */}
         {showSettings && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
@@ -1168,7 +1191,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex gap-2 justify-end">
                   <button className="px-3 py-1 bg-muted rounded" onClick={() => setShowSettings(false)}>Cancel</button>
-                  <button className="px-3 py-1 bg-primary text-primary-foreground rounded" onClick={handleProfileSave} disabled={avatarUploading}>
+                  <button className="px-3 py-1 bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow" onClick={handleProfileSave} disabled={avatarUploading}>
                     {avatarUploading ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
@@ -1228,7 +1251,7 @@ export default function DashboardPage() {
                   Cancel
                 </button>
                 <button
-                  className="px-3 py-1 bg-primary text-primary-foreground rounded"
+                  className="px-3 py-1 bg-cyan-400/70 backdrop-blur hover:bg-cyan-300/80 text-black dark:text-white shadow"
                   onClick={() => {
                     if (
                       editDialog.type === 'cell' &&
