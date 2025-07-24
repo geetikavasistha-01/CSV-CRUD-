@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && npm install autoprefixer postcss tailwindcss && npm run build"
+  command = "npm install && npm run build"
   publish = ".next"
 
 [build.environment]
