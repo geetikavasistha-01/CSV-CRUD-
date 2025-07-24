@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CSV CRUD Web Application
 
-## Getting Started
+A modern, full-featured CSV data management app built with Next.js and Supabase.
 
-First, run the development server:
+---
 
-```bash
+## 🚀 Product Overview
+
+This application enables users to:
+- Sign up and log in (email/password, Google OAuth)
+- Upload, view, and edit CSV files in a spreadsheet-like UI
+- Perform CRUD operations on rows and columns
+- Edit individual cells with inline editing
+- Save/load CSV tables to/from Supabase
+- Manage user profile (username, employee type, avatar)
+- Enjoy a responsive, modern UI with dark mode support
+
+---
+
+## ✨ Features
+
+- **Authentication:** Email/password and Google OAuth (via Supabase Auth)
+- **CSV Upload:** Drag-and-drop or file picker, with validation (size, rows, columns)
+- **Table Editor:** 
+  - Add, rename, delete columns
+  - Add, edit, delete rows
+  - Inline cell editing
+  - Column resizing and reordering
+  - Undo column delete
+  - Export as CSV or PDF
+- **Profile Management:** 
+  - Edit username, employee type, avatar
+  - Profile modal with validation and error feedback
+- **UI/UX:** 
+  - Modern, accessible UI (React, Tailwind CSS)
+  - Sidebar navigation
+  - Modals for profile, stats, confirmation dialogs
+  - Dynamic greeting and table size controls
+  - Dark mode toggle
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** Next.js (React, TypeScript, App Router)
+- **Backend:** Supabase (Postgres, Auth, Storage)
+- **State/UI:** React state, context providers, Headless UI, Tailwind CSS
+- **Table:** @tanstack/react-table
+- **CSV Parsing:** papaparse
+- **PDF Export:** jspdf, jspdf-autotable
+- **Icons:** lucide-react
+- **Unique IDs:** nanoid
+
+---
+
+## 🗂️ Project Structure
+/frontend ├── src │ ├── app │ │ ├── dashboard │ │ │ └── page.tsx # Main dashboard page │ │ ├── login │ │ │ └── page.tsx # Login page │ │ ├── signup │ │ │ └── page.tsx # Signup page │ ├── components │ │ └── ui/sidebar.tsx # Sidebar UI components │ └── utils │ └── supabaseClient.ts # Supabase client config └── tsconfig.json └── package.json └── README.md
+
+---
+
+## ⚡ Getting Started
+
+### 1. Clone the repository
+```sh
+git clone [https://github.com/geetikavasistha-01/CSV-CRUD-.git](https://github.com/geetikavasistha-01/CSV-CRUD-.git)
+cd CSV-CRUD-/frontend
+
+### 2. Install dependencies
+
+npm install
+
+### 3. Configure environment variables
+Create a .env.local file in 
+/frontend
+ with your Supabase credentials:
+ NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+### 4. Set up Supabase
+Create a Supabase project.
+Run the following SQL in the Supabase SQL editor:
+
+create table if not exists public.users (
+  id uuid primary key default gen_random_uuid(),
+  auth_user_id uuid references auth.users(id) on delete cascade unique not null,
+  username text not null,
+  employee_type text not null,
+  avatar_url text
+);
+
+alter table public.users enable row level security;
+
+create policy "Allow select for own user"
+  on public.users
+  for select
+  using (auth.uid() = auth_user_id);
+
+create policy "Allow insert for own user"
+  on public.users
+  for insert
+  with check (auth.uid() = auth_user_id);
+
+create policy "Allow update for own user"
+  on public.users
+  for update
+  using (auth.uid() = auth_user_id);
+
+create policy "Allow delete for own user"
+  on public.users
+  for delete
+  using (auth.uid() = auth_user_id);
+
+grant select, insert, update, delete on public.users to authenticated;
+
+### 5. Run the application
+```sh
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 6. Access the application
+Open your browser and navigate to http://localhost:3000 to access the application.
